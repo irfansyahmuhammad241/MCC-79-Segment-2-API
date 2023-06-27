@@ -1,15 +1,18 @@
-﻿namespace API.DTOS.Accounts
+﻿using API.Utilities;
+using System.ComponentModel.DataAnnotations;
+
+namespace API.DTOS.Accounts
 {
     public class NewAccountsDto
     {
+        [Required]
+        public Guid Guid { get; set; }
+        [PasswordPolicy]
         public string Password { get; set; }
-
-        public bool IsDeleted { get; set; }
-
+        [Required]
         public int OTP { get; set; }
-
+        [Required]
         public bool IsUsed { get; set; }
 
-        public DateTime ExpiredDate { get; set; }
     }
 }

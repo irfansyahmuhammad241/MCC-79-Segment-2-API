@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models
 {
-    [Table("tb_m_employees")]
+    [Table("Employees")]
     public class Employee : BaseEntity
     {
         [Column("nik", TypeName = "nchar(6)")]

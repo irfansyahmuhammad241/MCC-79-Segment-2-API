@@ -1,6 +1,7 @@
 ﻿using API.Contracts;
 using API.DTOS.Accounts;
 using API.Models;
+using API.Utilities;
 
 namespace API.Services
 {
@@ -24,6 +25,7 @@ namespace API.Services
                                                 new GetAccountsDto
                                                 {
                                                     guid = account.Guid,
+                                                    Password = account.Password,
                                                     IsDeleted = account.IsDeleted,
                                                     IsUsed = account.IsUsed,
                                                 }).ToList();
@@ -31,7 +33,7 @@ namespace API.Services
             return toDto; // Account found
         }
 
-        public GetAccountsDto? GetAccount(Guid guid)
+        public GetAccountsDto? GetAccountByGuid(Guid guid)
         {
             var account = _accountRepository.GetByGuid(guid);
             if (account is null)
@@ -42,6 +44,7 @@ namespace API.Services
             var toDto = new GetAccountsDto
             {
                 guid = account.Guid,
+                Password = account.Password,
                 IsDeleted = account.IsDeleted,
                 IsUsed = account.IsUsed,
             };
@@ -52,11 +55,13 @@ namespace API.Services
         {
             var account = new Account
             {
-                Guid = new Guid(),
-                IsDeleted = newAccountDto.IsDeleted,
+                Guid = newAccountDto.Guid,
+                Password = Hashing.HashPassword(newAccountDto.Password),
+                OTP = newAccountDto.OTP,
                 IsUsed = newAccountDto.IsUsed,
                 CreatedDate = DateTime.Now,
-                ModifiedDate = DateTime.Now
+                ModifiedDate = DateTime.Now,
+               
             };
 
             var createdAccount = _accountRepository.Create(account);
@@ -68,6 +73,7 @@ namespace API.Services
             var toDto = new GetAccountsDto
             {
                 guid = createdAccount.Guid,
+                Password = createdAccount.Password,
                 IsDeleted = createdAccount.IsDeleted,
                 IsUsed = createdAccount.IsUsed,
             };
@@ -88,6 +94,7 @@ namespace API.Services
             {
                 Guid = updateAccountDto.Guid,
                 IsUsed = updateAccountDto.IsUsed,
+                Password = Hashing.HashPassword(updateAccountDto.Password),
                 IsDeleted = updateAccountDto.IsDeleted,
                 ModifiedDate = DateTime.Now,
                 CreatedDate = getAccount!.CreatedDate

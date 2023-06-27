@@ -18,7 +18,7 @@ namespace API.Models
         [Column("is_used")]
         public bool IsUsed { get; set; }
 
-        [Column("expired_date")]
+        [Column("expired_time")]
         public DateTime ExpiredDate { get; set; }
 
         // Cardinality

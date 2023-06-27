@@ -4,8 +4,7 @@ using API.Models;
 
 namespace API.Services
 {
-    public class RoleController
-    {
+ 
         public class RoleService
         {
             private readonly IRoleRepository _roleRepository;
@@ -119,5 +118,5 @@ namespace API.Services
                 return 1;
             }
         }
-    }
+    
 }

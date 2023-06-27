@@ -45,7 +45,7 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public IActionResult GetByGuid(Guid guid)
         {
-            var account = _service.GetAccount(guid);
+            var account = _service.GetAccountByGuid(guid);
             if (account is null)
             {
                 return NotFound(new ResponseHandler<GetAccountsDto>

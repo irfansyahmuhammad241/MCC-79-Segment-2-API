@@ -6,7 +6,7 @@ namespace API.Services
 {
     public class UniversityService
     {
-        private readonly IUniversityRepository _universityRepository;
+        protected readonly IUniversityRepository _universityRepository;
 
         public UniversityService(IUniversityRepository universityRepository)
         {

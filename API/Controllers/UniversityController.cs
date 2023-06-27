@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using API.Contracts;
 using API.DTOS.Universities;
 using API.Services;
 using API.Utilities;
@@ -10,7 +11,7 @@ namespace API.Controllers;
 [Route("api/universities")]
 public class UniversityController : ControllerBase
 {
-    private readonly UniversityService _service;
+    protected readonly UniversityService _service;
 
     public UniversityController(UniversityService service)
     {

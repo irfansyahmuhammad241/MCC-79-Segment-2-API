@@ -10,9 +10,9 @@ namespace API.Controllers
     [Route("api/bookings")]
     public class BookingController : ControllerBase
     {
-        private readonly BookingServices _service;
+        private readonly BookingService _service;
 
-        public BookingController(BookingServices service)
+        public BookingController(BookingService service)
         {
             _service = service;
         }

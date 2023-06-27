@@ -4,11 +4,11 @@ using API.Models;
 
 namespace API.Services
 {
-    public class BookingServices
+    public class BookingService
     {
         private readonly IBookingRepository _bookingRepository;
 
-        public BookingServices(IBookingRepository bookingRepository)
+        public BookingService(IBookingRepository bookingRepository)
         {
             _bookingRepository = bookingRepository;
         }

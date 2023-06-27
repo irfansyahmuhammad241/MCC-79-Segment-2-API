@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using API.DTOS.Roles;
+using API.Services;
 using API.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using static API.Services.RoleController;
+using static API.Services.RoleService;
 
 namespace API.Controllers
 {
