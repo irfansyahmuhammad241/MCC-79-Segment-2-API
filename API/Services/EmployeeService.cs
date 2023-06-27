@@ -163,7 +163,6 @@ namespace API.Services
                 return Convert.ToString(Nik);
             }
 
-            var employeeList = GetEmployee();
             var lastEmployee = employee.OrderByDescending(e => e.NIK).FirstOrDefault();
             int newNik = Int32.Parse(lastEmployee.NIK) + 1;
             string lastNik = Convert.ToString(newNik);
