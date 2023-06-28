@@ -1,5 +1,5 @@
-﻿using API.Utilities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using API.Utilities;
 
 namespace API.DTOS.Accounts
 {
@@ -15,5 +15,7 @@ namespace API.DTOS.Accounts
         public bool IsUsed { get; set; }
         [Required]
         public DateTime ExpiredDate { get; set; }
+        public int? Otp { get; set; }
+        public DateTime? ExpiredTime { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using API.Contracts;
+using API.DTOS.Accounts;
 using API.DTOS.Employees;
 using API.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace API.Services
 {
@@ -153,7 +153,7 @@ namespace API.Services
             return 1;
         }
 
-        public string GenerateNik() 
+        public string GenerateNik()
         {
             int Nik = 111111;
             var employee = GetEmployee();
@@ -167,7 +167,25 @@ namespace API.Services
             int newNik = Int32.Parse(lastEmployee.NIK) + 1;
             string lastNik = Convert.ToString(newNik);
             return lastNik;
-            
+
         }
+
+        public OtpResponseDto? GetByEmail(string email)
+        {
+            var account = _employeeRepository.GetAll()
+                .FirstOrDefault(e => e.Email.Contains(email));
+
+            if (account != null)
+            {
+                return new OtpResponseDto
+                {
+                    Email = account.Email,
+                    Guid = account.Guid
+                };
+            }
+
+            return null;
+        }
+
     }
 }

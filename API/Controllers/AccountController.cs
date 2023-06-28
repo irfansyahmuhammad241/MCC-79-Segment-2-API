@@ -12,10 +12,12 @@ namespace API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _service;
+        private readonly EmployeeService _employeeService;
 
-        public AccountController(AccountService service)
+        public AccountController(AccountService accountService, EmployeeService employee)
         {
-            _service = service;
+            _service = accountService;
+            _employeeService = employee;
         }
 
         [HttpGet]
@@ -150,5 +152,96 @@ namespace API.Controllers
             });
         }
 
+        [Route("register")]
+        [HttpPost]
+        public IActionResult Register(RegisterDto register)
+        {
+            var createdRegister = _service.Register(register);
+            if (createdRegister == null)
+            {
+                return BadRequest(new ResponseHandler<RegisterDto>
+                {
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Register failed"
+                });
+            }
+
+            return Ok(new ResponseHandler<RegisterDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Successfully register",
+                Data = createdRegister
+            });
+        }
+
+        [HttpPost("forget-password")]
+        public IActionResult ForgetPassword(ForgotPasswordDto forgetPasswordDto)
+        {
+            var getAccount = _employeeService.GetByEmail(forgetPasswordDto.Email);
+            if (getAccount is null)
+            {
+                return NotFound(new ResponseHandler<ForgotPasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "No Account found with the given email"
+                });
+            }
+
+            // Generate OTP
+            Random random = new Random();
+            HashSet<int> uniqueDigits = new HashSet<int>();
+
+            while (uniqueDigits.Count < 6)
+            {
+                int digit = random.Next(0, 9);
+                uniqueDigits.Add(digit);
+            }
+
+            int generatedOtp = uniqueDigits.Aggregate(0, (acc, digit) => acc * 10 + digit);
+
+            // Get Account By Guid
+            var relatedAccount = _service.GetAccountByGuid(getAccount.Guid)!;
+
+            // Update Otp, Expired Time, isUsed in Account
+            var updateAccountDto = new UpdateAccountsDto
+            {
+                Guid = relatedAccount.guid,
+                Password = relatedAccount.Password,
+                IsDeleted = (bool)relatedAccount.IsDeleted,
+                Otp = generatedOtp,
+                IsUsed = false,
+                ExpiredTime = DateTime.Now.AddMinutes(5)
+            };
+
+            var updateResult = _service.UpdateAccount(updateAccountDto);
+            if (updateResult == 0)
+            {
+                return NotFound(new ResponseHandler<ForgotPasswordDto>
+                {
+                    Code = StatusCodes.Status500InternalServerError,
+                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Message = "Failed to Setting OTP in Related Account"
+                });
+            }
+
+            // Success to Create OTP and Update the Account Model
+            return Ok(new ResponseHandler<IEnumerable<OtpResponseDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Account found",
+                Data = new List<OtpResponseDto> { new OtpResponseDto {
+                    Guid = getAccount.Guid,
+                    Email = getAccount.Email,
+                    Otp = generatedOtp
+                } }
+            });
+
+        }
+
     }
+
 }

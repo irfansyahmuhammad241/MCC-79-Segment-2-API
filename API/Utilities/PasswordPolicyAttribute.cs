@@ -7,8 +7,8 @@ namespace API.Utilities
     {
         public override bool IsValid(object? value)
         {
-            var password = (string) value;
-            if (password is null) 
+            var password = (string)value;
+            if (password is null)
             {
                 return false;
             }
@@ -19,9 +19,14 @@ namespace API.Utilities
             var hasUpperCase = new Regex(@"[A-Z]+");
             var hasLowerCase = new Regex(@"[a-z]+");
 
-            bool isValidated = hasMinimum6Chars.IsMatch(password) && hasNumber.IsMatch(password) && !hasSymbols.IsMatch(password) && hasUpperCase.IsMatch(password) && hasUpperCase.IsMatch(password) && hasLowerCase.IsMatch(password);
+            var isValidated = hasMinimum6Chars.IsMatch(password) &&
+                            hasNumber.IsMatch(password) &&
+                            hasSymbols.IsMatch(password) &&
+                            hasUpperCase.IsMatch(password) &&
+                            hasLowerCase.IsMatch(password);
 
-            ErrorMessage = "Password must contain at least 6 characters, 1 Number, 1 Symbol, 1 Upper Case and 1 Lower Case"; 
+            ErrorMessage = "Password must contain at least 6 character, " + "1 number, " + "1 symbol, " + "1 upper case and " + "1 lower case";
+
             return isValidated;
         }
     }
