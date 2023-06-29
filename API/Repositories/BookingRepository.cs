@@ -9,5 +9,10 @@ namespace API.Repositories
         public BookingRepository(BookingDbContext context) : base(context)
         {
         }
+
+        public ICollection<Booking> GetBookingLength()
+        {
+            return _context.Set<Booking>().ToList();
+        }
     }
 }

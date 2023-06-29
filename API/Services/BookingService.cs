@@ -7,10 +7,12 @@ namespace API.Services
     public class BookingService
     {
         private readonly IBookingRepository _bookingRepository;
+        private readonly IRoomRepository _roomRepository;
 
-        public BookingService(IBookingRepository bookingRepository)
+        public BookingService(IBookingRepository bookingRepository, IRoomRepository roomRepository)
         {
             _bookingRepository = bookingRepository;
+            _roomRepository = roomRepository;
         }
 
         public IEnumerable<GetBookingsDto>? GetBooking()
@@ -139,5 +141,44 @@ namespace API.Services
 
             return 1;
         }
+
+        public IEnumerable<BookingLengthDto>? GetBookingLength()
+        {
+            var bookings = _bookingRepository.GetBookingLength();
+            if (!bookings.Any())
+            {
+                return null; // No Booking  found
+            }
+            var toDto = bookings.Select(booking =>
+                                                new BookingLengthDto
+                                                {
+                                                    RoomGuid = booking.RoomGuid,
+                                                    RoomName = booking.Room!.Name,
+                                                    BookingLength = CalculateLength(booking.StartDate, booking.EndDate)
+                                                }).ToList();
+            return toDto; // Booking found
+        }
+
+        private int CalculateLength(DateTime startDate, DateTime endDate)
+        {
+            int totalDays = (int)(endDate - startDate).TotalDays + 1;
+            int weekends = 0;
+            DateTime currentDate = startDate;
+
+            while (currentDate <= endDate)
+            {
+                if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    weekends++;
+                }
+                currentDate = currentDate.AddDays(1);
+            }
+
+            int bookingLength = totalDays - weekends;
+            return bookingLength;
+        }
     }
+
+
 }
+
