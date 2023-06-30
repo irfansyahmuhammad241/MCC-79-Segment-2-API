@@ -1,4 +1,5 @@
-﻿using API.Contracts;
+﻿using System.Security.Claims;
+using API.Contracts;
 using API.DTOS.Accounts;
 using API.Models;
 using API.Utilities;
@@ -11,16 +12,19 @@ namespace API.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUniversityRepository _universityRepository;
         private readonly IEducationRepository _educationRepository;
+        private readonly ITokenHandler _tokenHandler;
 
         public AccountService(IAccountRepository accountRepository,
                          IEmployeeRepository employeeRepository,
                          IUniversityRepository universityRepository,
-                         IEducationRepository educationRepository)
+                         IEducationRepository educationRepository,
+                         ITokenHandler tokenHandler)
         {
             _accountRepository = accountRepository;
             _employeeRepository = employeeRepository;
             _universityRepository = universityRepository;
             _educationRepository = educationRepository;
+            _tokenHandler = tokenHandler;
         }
 
         public IEnumerable<GetAccountsDto>? GetAccount()
@@ -138,6 +142,11 @@ namespace API.Services
 
         public RegisterDto? Register(RegisterDto registerDto)
         {
+            if (registerDto.Password != registerDto.ConfirmPassword)
+            {
+                return null;
+            }
+
             EmployeeService employeeService = new EmployeeService(_employeeRepository);
             Employee employee = new Employee
             {
@@ -226,7 +235,38 @@ namespace API.Services
             return toDto;
         }
 
+        public string Login(LoginDto login)
+        {
+            var emailEmp = _employeeRepository.GetEmail(login.Email);
+            if (emailEmp is null)
+            {
+                return "0";
+            }
 
+            var password = _accountRepository.GetByGuid(emailEmp.Guid);
+            var isValid = Hashing.ValidatePassword(login.Password, password!.Password);
+            if (!isValid)
+            {
+                return "-1";
+            }
+
+            var claims = new List<Claim>() {
+                new Claim("NIK", emailEmp.NIK),
+                new Claim("FullName", $"{emailEmp.FirstName} {emailEmp.LastName}"),
+                new Claim("Email", emailEmp.NIK)
+            };
+
+            try
+            {
+                var getToken = _tokenHandler.GenerateToken(claims);
+                return getToken;
+            }
+            catch
+            {
+                return "-2";
+            }
+
+        }
 
 
     }

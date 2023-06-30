@@ -242,6 +242,49 @@ namespace API.Controllers
 
         }
 
+        [HttpPost("Login")]
+        public IActionResult LoginRequest(LoginDto login)
+        {
+            var entities = _service.Login(login);
+            if (entities is "-1")
+            {
+                return BadRequest(new ResponseHandler<LoginDto>
+                {
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Password didn't match"
+                });
+
+            }
+
+            if (entities is "0")
+            {
+                return NotFound(new ResponseHandler<LoginDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Email not found"
+                });
+            }
+
+            if (entities is "-2")
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<LoginDto>
+                {
+                    Code = StatusCodes.Status500InternalServerError,
+                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Message = "Database Error"
+                });
+            }
+
+            return Ok(new ResponseHandler<LoginDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success To Login",
+            });
+        }
+
     }
 
 }

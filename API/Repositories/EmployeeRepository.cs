@@ -13,5 +13,10 @@ namespace API.Repositories
         {
             return _context.Set<Employee>().Where(u => u.Email == email);
         }
+
+        public Employee? GetEmail(string email)
+        {
+            return _context.Set<Employee>().SingleOrDefault(u => u.Email == email);
+        }
     }
 }

@@ -144,19 +144,34 @@ namespace API.Services
 
         public IEnumerable<BookingLengthDto>? GetBookingLength()
         {
-            var bookings = _bookingRepository.GetBookingLength();
-            if (!bookings.Any())
+            var bookings = _bookingRepository.GetAll();
+            var rooms = _roomRepository.GetAll();
+
+            var entities = (from booking in bookings
+                            join room in rooms on booking.RoomGuid equals room.Guid
+                            select new
+                            {
+                                guid = room.Guid,
+                                startDate = booking.StartDate,
+                                endDate = booking.EndDate,
+                                roomName = room.Name
+                            }).ToList();
+
+            var bookingDurations = new List<BookingLengthDto>();
+
+            foreach (var entity in entities)
             {
-                return null; // No Booking  found
+                var bookingDurationDto = new BookingLengthDto
+                {
+                    RoomGuid = entity.guid,
+                    RoomName = entity.roomName,
+                    BookingLength = CalculateLength(entity.startDate, entity.endDate)
+                };
+
+                bookingDurations.Add(bookingDurationDto);
             }
-            var toDto = bookings.Select(booking =>
-                                                new BookingLengthDto
-                                                {
-                                                    RoomGuid = booking.RoomGuid,
-                                                    RoomName = booking.Room!.Name,
-                                                    BookingLength = CalculateLength(booking.StartDate, booking.EndDate)
-                                                }).ToList();
-            return toDto; // Booking found
+
+            return bookingDurations; // Booking found
         }
 
         private int CalculateLength(DateTime startDate, DateTime endDate)
