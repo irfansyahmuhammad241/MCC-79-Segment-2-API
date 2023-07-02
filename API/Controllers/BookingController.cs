@@ -173,5 +173,51 @@ namespace API.Controllers
                 Data = entities
             });
         }
+
+        [HttpGet("Details")]
+        public IActionResult GetBookingDetails()
+        {
+            var bookingDetails = _service.GetBookingDetails();
+            if (bookingDetails == null)
+            {
+                return NotFound(new ResponseHandler<GetBookingsDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<BookingDetailsDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = bookingDetails
+            });
+        }
+
+        public IActionResult GetBookingDetails(Guid guid)
+        {
+            var bookingDetails = _service.GetBookingDetailByGuid(guid);
+
+            if (bookingDetails == null)
+            {
+                return NotFound(new ResponseHandler<GetBookingsDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+                });
+            }
+
+            return Ok(new ResponseHandler<BookingDetailsDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = bookingDetails
+            });
+        }
     }
 }

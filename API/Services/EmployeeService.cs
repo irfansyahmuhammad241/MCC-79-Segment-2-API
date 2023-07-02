@@ -19,6 +19,11 @@ namespace API.Services
             _universityRepository = universityRepository;
         }
 
+        public EmployeeService(IEmployeeRepository employeeRepository)
+        {
+            _employeeRepository = employeeRepository;
+        }
+
         public IEnumerable<GetEmployeesDto>? GetEmployee()
         {
             var employees = _employeeRepository.GetAll();
