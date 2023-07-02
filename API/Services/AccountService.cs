@@ -51,6 +51,7 @@ namespace API.Services
                                                     Password = account.Password,
                                                     IsDeleted = account.IsDeleted,
                                                     IsUsed = account.IsUsed,
+                                                    OTP = account.OTP
                                                 }).ToList();
 
             return toDto; // Account found
@@ -254,14 +255,79 @@ namespace API.Services
             return toDto;
         }
 
-        public string Login(LoginDto login)
+        public int ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            var employee = _employeeRepository.GetEmail(changePasswordDto.email);
+            if (employee is null)
+                return 0; // Email not found
+
+            var account = _accountRepository.GetByGuid(employee.Guid);
+            if (account is null)
+                return 0; // Email not found
+
+            if (account.IsUsed)
+                return -1; // OTP is used
+
+            if (account.OTP != changePasswordDto.otp)
+                return -2; // OTP is incorrect
+
+            if (account.ExpiredDate < DateTime.Now)
+                return -3; // OTP is expired
+
+
+            var isUpdated = _accountRepository.Update(new Account
+            {
+                Guid = account.Guid,
+                Password = Hashing.HashPassword(changePasswordDto.newPassword),
+                IsDeleted = account.IsDeleted,
+                OTP = account.OTP,
+                ExpiredDate = account.ExpiredDate,
+                IsUsed = true,
+                CreatedDate = account.CreatedDate,
+                ModifiedDate = DateTime.Now
+            });
+
+            return isUpdated ? 1    // Success
+                             : -4;  // Database Error
+        }
+
+        public int ForgotPassword(ForgotPasswordDto forgotPassword)
+        {
+            var employee = _employeeRepository.GetEmail(forgotPassword.Email);
+            if (employee is null)
+                return 0; // Email not found
+
+            var account = _accountRepository.GetByGuid(employee.Guid);
+            if (account is null)
+                return -1;
+            var otp = new Random().Next(111111, 999999);
+            var isUpdated = _accountRepository.Update(new Account
+            {
+                Guid = account.Guid,
+                Password = account.Password,
+                IsDeleted = account.IsDeleted,
+                ExpiredDate = DateTime.Now.AddMinutes(5),
+                OTP = otp,
+                IsUsed = false,
+                CreatedDate = account.CreatedDate,
+                ModifiedDate = DateTime.Now
+            });
+
+            if (!isUpdated)
+                return -1;
+
+            _emailHandler.SendEmail(forgotPassword.Email,
+                                "Forgot Password",
+                                $"Your OTP is {otp}");
+
+            return 1;
+        }
+
+        public string LoginAccount(LoginDto login)
         {
             var employee = _employeeRepository.GetEmail(login.Email);
             if (employee is null)
-            {
                 return "0";
-            }
-
 
             var account = _accountRepository.GetByGuid(employee.Guid);
             if (account is null)
@@ -270,14 +336,21 @@ namespace API.Services
             if (!Hashing.ValidatePassword(login.Password, account!.Password))
                 return "-1";
 
-            var claims = new List<Claim>() {
-            new Claim("NIK", employee.NIK),
-            new Claim("FullName", $"{employee.FirstName} {employee.LastName}"),
-            new Claim("Email", login.Email)
-            };
-
             try
             {
+                var claims = new List<Claim>() {
+                new Claim("NIK", employee.NIK),
+                new Claim("FullName", $"{employee.FirstName} {employee.LastName}"),
+                new Claim("EmailAddress", login.Email)
+            };
+
+                var getAccountRole = _accountRoleRepository.GetAccountRolesByAccountGuid(employee.Guid);
+                var getRoleNameByAccountRole = from ar in getAccountRole
+                                               join r in _roleRepository.GetAll() on ar.RoleGuid equals r.Guid
+                                               select r.Name;
+
+                claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));
+
                 var getToken = _tokenHandler.GenerateToken(claims);
                 return getToken;
             }
@@ -285,55 +358,10 @@ namespace API.Services
             {
                 return "-2";
             }
+
+
+
         }
-
-        public int ChangePassword(ChangePasswordDto changePasswordDto)
-        {
-            var isExist = _employeeRepository.CheckEmail(changePasswordDto.email);
-            if (isExist is null)
-            {
-                return -1; //Account not found
-            }
-
-            var getAccount = _accountRepository.GetByGuid(isExist.Guid);
-            if (getAccount.OTP != changePasswordDto.otp)
-            {
-                return 0;
-            }
-
-            if (getAccount.IsUsed == true)
-            {
-                return 1;
-            }
-
-            if (getAccount.ExpiredDate < DateTime.Now)
-            {
-                return 2;
-            }
-
-            var account = new Account
-            {
-                Guid = getAccount.Guid,
-                IsUsed = getAccount.IsUsed,
-                IsDeleted = getAccount.IsDeleted,
-                ModifiedDate = DateTime.Now,
-                CreatedDate = getAccount.CreatedDate,
-                OTP = getAccount.OTP,
-                ExpiredDate = getAccount.ExpiredDate,
-                Password = Hashing.HashPassword(changePasswordDto.newPassword)
-            };
-
-            var isUpdated = _accountRepository.Update(account);
-            if (!isUpdated)
-            {
-                return 0; //Account Not Update
-            }
-
-            return 3;
-        }
-
-
-
     }
 }
 

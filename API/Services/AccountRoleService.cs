@@ -20,6 +20,7 @@ namespace API.Services
             {
                 return null; // No Account Role found
             }
+
             var toDto = accountRoles.Select(accountRole =>
                                                 new GetAccountRolesDto
                                                 {

@@ -158,7 +158,7 @@ namespace API.Controllers
 
         [Route("register")]
         [HttpPost]
-        [Authorize(Roles = $"{nameof(RoleLevel.User)}")]
+        [AllowAnonymous]
         public IActionResult Register(RegisterDto register)
         {
             var createdRegister = _service.Register(register);
@@ -182,76 +182,41 @@ namespace API.Controllers
         }
 
         [HttpPost("forget-password")]
-        [Authorize(Roles = $"{nameof(RoleLevel.User)}")]
+        [AllowAnonymous]
+        //[Authorize(Roles = $"{nameof(RoleLevel.User)}")]
         public IActionResult ForgetPassword(ForgotPasswordDto forgetPasswordDto)
         {
-            var getAccount = _employeeService.GetByEmail(forgetPasswordDto.Email);
-            if (getAccount is null)
-            {
-                return NotFound(new ResponseHandler<ForgotPasswordDto>
+            var isUpdated = _service.ForgotPassword(forgetPasswordDto);
+            if (isUpdated == 0)
+                return NotFound(new ResponseHandler<ChangePasswordDto>
                 {
                     Code = StatusCodes.Status404NotFound,
                     Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "No Account found with the given email"
+                    Message = "Email not found"
                 });
-            }
 
-            // Generate OTP
-            Random random = new Random();
-            HashSet<int> uniqueDigits = new HashSet<int>();
-
-            while (uniqueDigits.Count < 6)
-            {
-                int digit = random.Next(0, 9);
-                uniqueDigits.Add(digit);
-            }
-
-            int generatedOtp = uniqueDigits.Aggregate(0, (acc, digit) => acc * 10 + digit);
-
-            // Get Account By Guid
-            var relatedAccount = _service.GetAccountByGuid(getAccount.Guid)!;
-
-            // Update Otp, Expired Time, isUsed in Account
-            var updateAccountDto = new UpdateAccountsDto
-            {
-                Guid = relatedAccount.guid,
-                Password = relatedAccount.Password,
-                IsDeleted = (bool)relatedAccount.IsDeleted,
-                Otp = generatedOtp,
-                IsUsed = false,
-                ExpiredTime = DateTime.Now.AddMinutes(5)
-            };
-
-            var updateResult = _service.UpdateAccount(updateAccountDto);
-            if (updateResult == 0)
-            {
-                return NotFound(new ResponseHandler<ForgotPasswordDto>
+            if (isUpdated is -1)
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<ChangePasswordDto>
                 {
                     Code = StatusCodes.Status500InternalServerError,
                     Status = HttpStatusCode.InternalServerError.ToString(),
-                    Message = "Failed to Setting OTP in Related Account"
+                    Message = "Error retrieving data from the database"
                 });
-            }
 
-            // Success to Create OTP and Update the Account Model
-            return Ok(new ResponseHandler<IEnumerable<OtpResponseDto>>
+            return Ok(new ResponseHandler<ChangePasswordDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
-                Message = "Account found",
-                Data = new List<OtpResponseDto> { new OtpResponseDto {
-                    Guid = getAccount.Guid,
-                    Email = getAccount.Email,
-                    Otp = generatedOtp
-                } }
+                Message = "Otp has been sent to your email"
             });
 
         }
 
         [HttpPost("Login")]
+        [AllowAnonymous]
         public IActionResult LoginRequest(LoginDto login)
         {
-            var loginResult = _service.Login(login);
+            var loginResult = _service.LoginAccount(login);
             if (loginResult == "0")
                 return NotFound(new ResponseHandler<LoginDto>
                 {
@@ -288,54 +253,61 @@ namespace API.Controllers
         }
 
         [HttpPut("ChangePassword")]
+        [AllowAnonymous]
         public IActionResult UpdatePassword(ChangePasswordDto changePasswordDto)
         {
-            var update = _service.ChangePassword(changePasswordDto);
-            if (update is -1)
-            {
+            var isUpdated = _service.ChangePassword(changePasswordDto);
+            if (isUpdated == 0)
                 return NotFound(new ResponseHandler<ChangePasswordDto>
                 {
                     Code = StatusCodes.Status404NotFound,
                     Status = HttpStatusCode.NotFound.ToString(),
                     Message = "Email not found"
                 });
-            }
 
-            if (update is 0)
+            if (isUpdated == -1)
             {
-                return NotFound(new ResponseHandler<ChangePasswordDto>
+                return BadRequest(new ResponseHandler<ChangePasswordDto>
                 {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Otp doesn't match"
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Otp is already used"
                 });
             }
 
-            if (update is 1)
+            if (isUpdated == -2)
             {
-                return NotFound(new ResponseHandler<ChangePasswordDto>
+                return BadRequest(new ResponseHandler<ChangePasswordDto>
                 {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Otp doesn't match"
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Otp is incorrect"
                 });
             }
 
-            if (update is 2)
+            if (isUpdated == -3)
             {
-                return NotFound(new ResponseHandler<ChangePasswordDto>
+                return BadRequest(new ResponseHandler<ChangePasswordDto>
                 {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Otp Already Expired"
+                    Code = StatusCodes.Status400BadRequest,
+                    Status = HttpStatusCode.BadRequest.ToString(),
+                    Message = "Otp is expired"
                 });
             }
+
+            if (isUpdated is -4)
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status500InternalServerError,
+                    Status = HttpStatusCode.InternalServerError.ToString(),
+                    Message = "Error retrieving data from the database"
+                });
 
             return Ok(new ResponseHandler<ChangePasswordDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
-                Message = "Succesfuly Updated"
+                Message = "Password has been changed successfully"
             });
 
 

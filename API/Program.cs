@@ -44,7 +44,7 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<BookingService>();
 
 
-//Add SmtpClient
+// Add SmtpClient
 builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler(
     builder.Configuration["EmailService:SmtpServer"],
     int.Parse(builder.Configuration["EmailService:SmtpPort"]),

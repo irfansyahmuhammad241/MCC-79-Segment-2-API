@@ -31,6 +31,6 @@ namespace API.Utilities
             using var client = new SmtpClient(_smtpServer, _smtpPort);
             client.Send(message);
         }
-
     }
+
 }
