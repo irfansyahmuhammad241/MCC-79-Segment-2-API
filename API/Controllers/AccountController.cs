@@ -245,43 +245,39 @@ namespace API.Controllers
         [HttpPost("Login")]
         public IActionResult LoginRequest(LoginDto login)
         {
-            var entities = _service.Login(login);
-            if (entities is "-1")
-            {
+            var loginResult = _service.Login(login);
+            if (loginResult == "0")
+                return NotFound(new ResponseHandler<LoginDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Account not found"
+                });
+
+            if (loginResult == "-1")
                 return BadRequest(new ResponseHandler<LoginDto>
                 {
                     Code = StatusCodes.Status400BadRequest,
                     Status = HttpStatusCode.BadRequest.ToString(),
-                    Message = "Password didn't match"
+                    Message = "Password is incorrect"
                 });
 
-            }
-
-            if (entities is "0")
-            {
-                return NotFound(new ResponseHandler<LoginDto>
-                {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.BadRequest.ToString(),
-                    Message = "Email not found"
-                });
-            }
-
-            if (entities is "-2")
+            if (loginResult == "-2")
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<LoginDto>
                 {
                     Code = StatusCodes.Status500InternalServerError,
                     Status = HttpStatusCode.InternalServerError.ToString(),
-                    Message = "Database Error"
+                    Message = "Error retrieving when creating token"
                 });
             }
 
-            return Ok(new ResponseHandler<LoginDto>
+            return Ok(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
-                Message = "Success To Login",
+                Message = "Login Success",
+                Data = loginResult
             });
         }
 

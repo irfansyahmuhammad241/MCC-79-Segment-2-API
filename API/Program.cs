@@ -39,6 +39,14 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<BookingService>();
 
 
+//Add SmtpClient
+builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler(
+    builder.Configuration["EmailService:SmtpServer"],
+    int.Parse(builder.Configuration["EmailService:SmtpPort"]),
+    builder.Configuration["EmailService:FromEmailAddress"]
+));
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

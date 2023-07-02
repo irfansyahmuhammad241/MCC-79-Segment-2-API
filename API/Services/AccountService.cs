@@ -239,23 +239,24 @@ namespace API.Services
 
         public string Login(LoginDto login)
         {
-            var emailEmp = _employeeRepository.GetEmail(login.Email);
-            if (emailEmp is null)
+            var employee = _employeeRepository.GetEmail(login.Email);
+            if (employee is null)
             {
                 return "0";
             }
 
-            var password = _accountRepository.GetByGuid(emailEmp.Guid);
-            var isValid = Hashing.ValidatePassword(login.Password, password!.Password);
-            if (!isValid)
-            {
+
+            var account = _accountRepository.GetByGuid(employee.Guid);
+            if (account is null)
+                return "0";
+
+            if (!Hashing.ValidatePassword(login.Password, account!.Password))
                 return "-1";
-            }
 
             var claims = new List<Claim>() {
-                new Claim("NIK", emailEmp.NIK),
-                new Claim("FullName", $"{emailEmp.FirstName} {emailEmp.LastName}"),
-                new Claim("Email", emailEmp.NIK)
+            new Claim("NIK", employee.NIK),
+            new Claim("FullName", $"{employee.FirstName} {employee.LastName}"),
+            new Claim("Email", login.Email)
             };
 
             try
@@ -267,7 +268,6 @@ namespace API.Services
             {
                 return "-2";
             }
-
         }
 
         public int ChangePassword(ChangePasswordDto changePasswordDto)
