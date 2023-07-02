@@ -7,5 +7,7 @@ namespace API.Contracts
         IEnumerable<Employee> GetByEmail(string email);
 
         Employee GetEmail(string email);
+        Employee? GetByEmailAndPhoneNumber(string data);
+        Employee? CheckEmail(string email);
     }
 }

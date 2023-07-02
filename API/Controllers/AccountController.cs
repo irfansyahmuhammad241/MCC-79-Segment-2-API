@@ -285,6 +285,60 @@ namespace API.Controllers
             });
         }
 
+        [HttpPut("ChangePassword")]
+        public IActionResult UpdatePassword(ChangePasswordDto changePasswordDto)
+        {
+            var update = _service.ChangePassword(changePasswordDto);
+            if (update is -1)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Email not found"
+                });
+            }
+
+            if (update is 0)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Otp doesn't match"
+                });
+            }
+
+            if (update is 1)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Otp doesn't match"
+                });
+            }
+
+            if (update is 2)
+            {
+                return NotFound(new ResponseHandler<ChangePasswordDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Otp Already Expired"
+                });
+            }
+
+            return Ok(new ResponseHandler<ChangePasswordDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Succesfuly Updated"
+            });
+
+
+        }
+
     }
 
 }
