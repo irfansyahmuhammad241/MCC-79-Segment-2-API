@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using API.Contracts;
+using API.DTOS.AccountRoles;
 using API.DTOS.Accounts;
 using API.Models;
 using API.Utilities;
@@ -12,19 +13,28 @@ namespace API.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUniversityRepository _universityRepository;
         private readonly IEducationRepository _educationRepository;
+        private readonly IAccountRoleRepository _accountRoleRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IEmailHandler _emailHandler;
 
         public AccountService(IAccountRepository accountRepository,
                          IEmployeeRepository employeeRepository,
                          IUniversityRepository universityRepository,
                          IEducationRepository educationRepository,
-                         ITokenHandler tokenHandler)
+                         ITokenHandler tokenHandler,
+                         IRoleRepository roleRepository,
+                         IEmailHandler emailHandler,
+                         IAccountRoleRepository accountRoleRepository)
         {
             _accountRepository = accountRepository;
             _employeeRepository = employeeRepository;
             _universityRepository = universityRepository;
             _educationRepository = educationRepository;
             _tokenHandler = tokenHandler;
+            _roleRepository = roleRepository;
+            _emailHandler = emailHandler;
+            _accountRoleRepository = accountRoleRepository;
         }
 
         public IEnumerable<GetAccountsDto>? GetAccount()
@@ -209,6 +219,13 @@ namespace API.Services
             {
                 return null;
             }
+
+            var getRoleUser = _roleRepository.GetByName("User");
+            _accountRoleRepository.Create(new AccountRoleDto
+            {
+                AccountGuid = account.Guid,
+                RoleGuid = getRoleUser.Guid
+            });
 
             var createdAccount = _accountRepository.Create(account);
             if (createdAccount is null)
