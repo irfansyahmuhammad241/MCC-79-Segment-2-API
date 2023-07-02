@@ -174,7 +174,7 @@ namespace API.Controllers
             });
         }
 
-        [HttpGet("Details")]
+        [HttpGet("Booking Details")]
         public IActionResult GetBookingDetails()
         {
             var bookingDetails = _service.GetBookingDetails();

@@ -145,6 +145,9 @@ namespace API.Services
             return 1;
         }
 
+
+
+
         public IEnumerable<BookingDetailsDto> GetRoomUsedToday()
         {
             var bookings = _bookingRepository.GetAll();
