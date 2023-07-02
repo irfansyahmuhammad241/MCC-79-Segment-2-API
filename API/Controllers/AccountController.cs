@@ -3,12 +3,16 @@ using API.DTOS.AccountRoles;
 using API.DTOS.Accounts;
 using API.Services;
 using API.Utilities;
+using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/account")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Admin)}")]
+
     public class AccountController : ControllerBase
     {
         private readonly AccountService _service;
@@ -154,6 +158,7 @@ namespace API.Controllers
 
         [Route("register")]
         [HttpPost]
+        [Authorize(Roles = $"{nameof(RoleLevel.User)}")]
         public IActionResult Register(RegisterDto register)
         {
             var createdRegister = _service.Register(register);
@@ -177,6 +182,7 @@ namespace API.Controllers
         }
 
         [HttpPost("forget-password")]
+        [Authorize(Roles = $"{nameof(RoleLevel.User)}")]
         public IActionResult ForgetPassword(ForgotPasswordDto forgetPasswordDto)
         {
             var getAccount = _employeeService.GetByEmail(forgetPasswordDto.Email);

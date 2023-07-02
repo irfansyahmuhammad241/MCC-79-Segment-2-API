@@ -1,14 +1,16 @@
 ﻿using System.Net;
-using API.Contracts;
 using API.DTOS.Universities;
 using API.Services;
 using API.Utilities;
+using API.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/universities")]
+[Authorize(Roles = $"{nameof(RoleLevel.Manager)}")]
 public class UniversityController : ControllerBase
 {
     protected readonly UniversityService _service;
