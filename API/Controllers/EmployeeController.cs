@@ -148,5 +148,52 @@ namespace API.Controllers
                 Message = "Successfully deleted"
             });
         }
+
+        [HttpGet("get-all-master")]
+        public IActionResult GetMaster()
+        {
+            var entities = _service.GetMaster();
+            if (entities is null)
+            {
+                return NotFound(new ResponseHandler<EmployeeEducationDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<EmployeeEducationDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = entities
+            });
+        }
+
+        [HttpGet("get-all-master")]
+        public IActionResult GetMasterByGuid(Guid guid)
+        {
+            var entities = _service.GetByMasterGuid(guid);
+            if (entities is null)
+            {
+                return NotFound(new ResponseHandler<EmployeeEducationDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+                });
+            }
+
+            return Ok(new ResponseHandler<EmployeeEducationDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = entities
+            });
+        }
+
     }
 }
