@@ -192,6 +192,32 @@ namespace API.Services
             int bookingLength = totalDays - weekends;
             return bookingLength;
         }
+
+        public List<BookingDetailsDto> GetBookingDetails() 
+        { 
+            var bookings = _bookingRepository.GetBookingDetails();
+            var bookingDetails = bookings.Select(b => new BookingDetailsDto
+            {
+               Guid = b.Guid,
+               BookedNIK = b.BookedNIK,
+               BookedBye = b.BookedBye,
+               RoomName = b.RoomName,
+               StartDate = b.StartDate,
+               EndDate = b.EndDate,
+               StatusLevel = b.StatusLevel,
+               Remarks = b.Remarks,
+            }).ToList();
+
+            return bookingDetails; 
+        }
+
+        public BookingDetailsDto? GetBookingDetailByGuid(Guid guid) 
+        {
+            var relatedBooking = GetBookingDetails().FirstOrDefault(b => b.Guid == guid);
+            return relatedBooking;
+        }
+
+
     }
 
 

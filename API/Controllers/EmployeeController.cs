@@ -172,7 +172,8 @@ namespace API.Controllers
             });
         }
 
-        [HttpGet("get-all-master")]
+
+        [HttpGet("get-all-master-byGuid")]
         public IActionResult GetMasterByGuid(Guid guid)
         {
             var entities = _service.GetByMasterGuid(guid);
