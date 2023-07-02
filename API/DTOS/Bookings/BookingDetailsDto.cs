@@ -8,6 +8,7 @@ namespace API.DTOS.Bookings
         public string BookedNIK { get; set; }
         public string BookedBye { get; set; }
         public string RoomName { get; set; }
+        public int Floor { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public StatusLevel StatusLevel { get; set; }

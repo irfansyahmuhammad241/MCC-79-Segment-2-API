@@ -220,5 +220,30 @@ namespace API.Controllers
                 Data = bookingDetails
             });
         }
+
+        [HttpGet("RoomUsedToday")]
+        public IActionResult GetUsedRoomToday()
+        {
+            var bookingDetails = _service.GetRoomUsedToday();
+
+            if (bookingDetails == null)
+            {
+                return NotFound(new ResponseHandler<BookingDetailsDto>
+                {
+                    Code = StatusCodes.Status404NotFound,
+                    Status = HttpStatusCode.NotFound.ToString(),
+                    Message = "Data not found"
+
+                });
+            }
+
+            return Ok(new ResponseHandler<IEnumerable<BookingDetailsDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data Found",
+                Data = bookingDetails
+            });
+        }
     }
 }
