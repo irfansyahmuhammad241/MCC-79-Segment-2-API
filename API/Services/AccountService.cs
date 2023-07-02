@@ -169,18 +169,20 @@ namespace API.Services
                 return null;
             }
 
-            University university = new University
+            var univeristyEntity = _universityRepository.GetByCodeAndName(registerDto.UniversityCode,
+                registerDto.UniversityName);
+            if (univeristyEntity is null)
             {
-                Guid = new Guid(),
-                Code = registerDto.UniversityCode,
-                Name = registerDto.UniversityName
-            };
-
-            var createdUniversity = _universityRepository.Create(university);
-            if (createdUniversity is null)
-            {
-                return null;
+                var university = new University
+                {
+                    Guid = new Guid(),
+                    Code = registerDto.UniversityCode,
+                    Name = registerDto.UniversityName,
+                };
+                univeristyEntity = _universityRepository.Create(university);
             }
+
+
 
             Education education = new Education
             {
@@ -188,7 +190,7 @@ namespace API.Services
                 Major = registerDto.Major,
                 Degree = registerDto.Degree,
                 GPA = registerDto.Gpa,
-                UniversityGuid = university.Guid
+                UniversityGuid = univeristyEntity.Guid
             };
 
             var createdEducation = _educationRepository.Create(education);
@@ -228,8 +230,8 @@ namespace API.Services
                 Major = createdEducation.Major,
                 Degree = createdEducation.Degree,
                 Gpa = createdEducation.GPA,
-                UniversityCode = createdUniversity.Code,
-                UniversityName = createdUniversity.Name
+                UniversityCode = univeristyEntity.Code,
+                UniversityName = univeristyEntity.Name
             };
 
             return toDto;
@@ -312,6 +314,7 @@ namespace API.Services
 
             return 3;
         }
+
 
 
     }
