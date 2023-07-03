@@ -126,9 +126,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseCors();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
