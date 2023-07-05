@@ -1,0 +1,33 @@
+div.col1 {
+    background-color: greenyellow;
+    height: 50px;
+    width: 400px;
+    display: inline-block;
+}
+
+div.col2 {
+    display : inline-block;
+    border : 5px solid;
+    background-color: lightcyan;
+    height: 200px;
+    width: 400px;
+    text-align : center;
+}
+
+div.col4 {
+    display: inline-block;
+    background-color: greenyellow;
+    height: 50px;
+    width: 400px;
+}
+
+div.container {
+    border : 5px solid;
+    
+}
+
+button {
+    background-color: aquamarine;
+}
+
+
