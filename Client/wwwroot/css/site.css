@@ -1,33 +1,36 @@
-div.col1 {
-    background-color: greenyellow;
-    height: 50px;
-    width: 400px;
-    display: inline-block;
+.container {
+    position: relative;
+    left : 100px;
+    width: 450px; 
 }
 
-div.col2 {
-    display : inline-block;
-    border : 5px solid;
+
+#tes1{
+
+    background-color: greenyellow;  
+    height: 100px;
+    width: 400px;
+
+}
+
+#tes2 {
+    border: 5px solid;
     background-color: lightcyan;
-    height: 200px;
+    height: 100px;
     width: 400px;
-    text-align : center;
 }
 
-div.col4 {
-    display: inline-block;
+#tes3 {
     background-color: greenyellow;
-    height: 50px;
+    height: 100px;
     width: 400px;
+
 }
 
-div.container {
-    border : 5px solid;
-    
-}
 
-button {
+button.button1{
     background-color: aquamarine;
+    
 }
 
 
