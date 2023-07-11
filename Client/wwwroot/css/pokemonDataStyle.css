@@ -1,0 +1,38 @@
+.pokemon-img {
+    width: 250px;
+    height: 250px;
+        
+}
+
+.pokeball-img {
+    width: 100px;
+    height: 100px;
+ 
+}
+
+h1.judul {
+    text-align: center;
+}
+table.table.dataTable {
+ margin-left: auto;
+ margin-right: auto;
+}
+
+div.modal-header {
+    background-color: azure;
+}
+
+
+div.modal-footer {
+    background-color:azure;
+}
+
+div.modal-body {
+    background-color: cornsilk;
+}
+
+.dataTables_filter, dataTables_length {
+    padding-bottom: 10px;
+    
+}
+

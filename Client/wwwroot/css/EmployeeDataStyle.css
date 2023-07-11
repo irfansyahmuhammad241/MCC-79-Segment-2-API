@@ -1,0 +1,36 @@
+h1.judul {
+    text-align: center;
+}
+table.table.dataTable {
+ margin-left: auto;
+ margin-right: auto;
+ width: auto;
+}
+
+div.modal-header {
+    background-color: lightsteelblue;
+}
+
+
+div.modal-footer {
+    background-color:lightsteelblue;
+}
+
+div.modal-body {
+    background-color: white;
+}
+
+.dataTables_filter, dataTables_length {
+    padding-bottom: 10px;
+    padding-right:10px;
+    
+}
+
+div.dt-buttons > .dt-button:first-child{
+   padding-left: 10px;
+}
+
+table.table.dataTable {
+    width: 1350px;
+}
+
