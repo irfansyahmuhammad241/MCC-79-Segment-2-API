@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick ="addEmployee" class="btn btn-primary d-inline-block" data-bs-dismiss="modal">Add Employee</button>
+                    <button type="button" onclick ="addEmployee()" class="btn btn-primary d-inline-block" data-bs-dismiss="modal">Add Employee</button>
                     <button type="button" class="btn btn-secondary d-inline-block"  data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -79,20 +79,60 @@
     </tbody>
 </table>
 
-<@*div class="modal" id="modalPoke" tabindex="-1">
+
+
+<div class="modal" id="modalUpdateEmployee" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
+                <h5 class="modal-title">Update</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
+                <input type ="hidden" class="form-control" id="guidUpd" value="">
+                <input type ="hidden" class="form-control" id="nikUpd" value="">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label"> First Name</label>
+                    <input type="text" class="form control" id="firstNameUpd" placeholder="First Name">
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label"> Last Name</label>
+                    <input type="text" class="form control" id="lastNameUpd" placeholder="Last Name">
+                </div>
+                <div class="mb-3">
+                    <label for="birthDate" class="form-label"> Birth Date</label>
+                    <input type="datetime-local" class="form control" id="birthDateUpd" placeholder="Birth Date">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"> Gender</label>
+                    <br />
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gender" id="femaleRadio" value="female" checked>
+                        <label class="form-check-label" for="femaleRadio">Female</label>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="maleRadio" value="male" checked>
+                    <label class="form-check-label" for="maleRadio">male</label>
+                </div>
+                <div class="mb-3">
+                    <label for="hiringDate" class="form-label"> Hiring Date</label>
+                    <input type="datetime-local" class="form control" id="hiringDateUpd" placeholder="Hiring Date">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label"> Email</label>
+                    <input type="email" class="form control" id="emailUpd" placeholder="Email">
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label"> Phone Number</label>
+                    <input type="tel" class="form control" id="phoneNumberUpd" placeholder="Phone Number">
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="UpdateEmployee()" class="btn btn-primary d-inline-block" data-bs-dismiss="modal">Update Employee</button>
+                <button type="button" class="btn btn-secondary d-inline-block" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-</div>*@
+</div>
 

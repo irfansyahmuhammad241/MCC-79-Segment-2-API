@@ -5,8 +5,7 @@ namespace API.DTOS.Employees
 {
     public class NewEmployeeDto
     {
-        [Required]
-        public string NIK { get; set; } 
+     
         [Required]
         public string FirstName { get; set; }
         public string LastName { get; set; }

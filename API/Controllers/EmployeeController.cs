@@ -2,6 +2,7 @@
 using API.DTOS.Employees;
 using API.Services;
 using API.Utilities;
+using API.Utilities.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -196,5 +197,22 @@ namespace API.Controllers
             });
         }
 
+        [HttpGet("Count-Employee-Gender")]
+        [Route("api/employees/countGender")]
+        public IActionResult GetEmployeeCount()
+        {
+            int maleCount = _service.GetEmployee().Count(e => e.Gender == GenderEnum.Male);
+            int femaleCount = _service.GetEmployee().Count(e => e.Gender == GenderEnum.Female);
+
+            var result = new
+            {
+                MaleCount = maleCount,
+                FemaleCount = femaleCount
+            };
+
+            return Ok(result);
+        }
+
     }
+
 }

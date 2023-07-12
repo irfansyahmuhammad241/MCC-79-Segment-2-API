@@ -222,7 +222,8 @@ namespace API.Services
             }
 
             var getRoleUser = _roleRepository.GetByName("User");
-            _accountRoleRepository.Create(new AccountRoleDto
+
+            _accountRoleRepository.Create(new AccountRole 
             {
                 AccountGuid = account.Guid,
                 RoleGuid = getRoleUser.Guid

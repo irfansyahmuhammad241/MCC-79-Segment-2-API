@@ -98,7 +98,8 @@ $(document).ready(function () {
             {
                 data: null,
                 render: function (data, type, row) {
-                    return `<button onclick="deleteEmployee('${row.Guid}')" class="btn btn-secondary"> Delete </button>`;
+                    return `<button onclick="ShowUpdate('${row.guid}')" data-bs-toggle="modal" data-bs-target="#modalUpdateEmployee" class="btn btn-primary"> Update </button>` +
+                        `   <button onclick="deleteEmployee('${row.guid}')" class="btn btn-secondary"> Delete </button>`;
                 }
             }
         ]
@@ -106,47 +107,68 @@ $(document).ready(function () {
 });
 
 function addEmployee() {
-    let firstName = $("#firstName").val();
-    let lastName = $("#lastName").val();
-    let birthDate = $("#birthDate").val();
-    let gender = $("#input[name=gender]:checked").val();
-    let genderEnum;
-    if (gender == "Female") {
-        genderEnum = 0;
-    } else
-    {
-        genderEnum = 1;
-    }
-    let hiringDate = $("hiringDate").val();
-    let email = $("email").val();
-    let phone = $("phoneNumber").val();
+    //let firstName = $("#firstName").val();
+    //let lastName = $("#lastName").val();
+    //let birthDate = $("#birthDate").val();
+    //let gender = $("input[name=gender]:checked").val();
+    //let genderEnum;
+    //if (gender == "Female") {
+    //    genderEnum = 0;
+    //} else
+    //{
+    //    genderEnum = 1;
+    //}
+    //let hiringDate = $("#hiringDate").val();
+    //let email = $("#email").val();
+    //let phone = $("#phoneNumber").val();
 
-    let data =
-    {
-        firstName: firstName,
-        lastName: lastName,
-        birthDate: birthDate,
-        gender: genderEnum,
-        hiringDate: hiringDate,
-        email: email,
-        phone: phone
+    //let data =
+    //{
+    //    firstName: firstName,
+    //    lastName: lastName,
+    //    birthDate: birthDate,
+    //    gender: genderEnum,
+    //    hiringDate: hiringDate,
+    //    email: email,
+    //    phone: phone
+    //};
+
+    let data = {
+        firstName: $("#firstName").val(),
+        lastName: $("#lastName").val(),
+        birthDate: $("#birthDate").val(),
+        gender: $("input[name='gender']:checked").val() === "Female" ? 0 : 1,
+        hiringDate: $("#hiringDate").val(),
+        email: $("#email").val(),
+        phoneNumber: $("#phoneNumber").val(),
     };
+
     $.ajax({
         url: "https://localhost:7294/api/employees",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringfy(data),
+        data: JSON.stringify(data),
     }).done((result) =>
     {
-        alert("Data has been inserted")
+        Swal.fire
+        (
+            'Data Has Been Successfuly Inserted',
+            'Success'
+        ).then(() => {
+            location.reload();
+        })
     }).fail((error) => {
-        alert("Failed to insert data. Please Try Again")
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops',
+            text: 'Failed to insert data, Please Try Again'
+        })
     })
 
 }
 
-function deleteEmployee(Guid)
-{
+
+function deleteEmployee(Guid) {
     Swal.fire({
         title: 'Are You Sure?',
         text: 'Changes cant be reverted!',
@@ -175,37 +197,96 @@ function deleteEmployee(Guid)
     });
 }
 
-
-function detail(stringURL) {
+function ShowUpdate(guid) {
     $.ajax({
-        url: stringURL
-        
-    }).done(res => {
-        $(".modal-title").html(res.name);
-        $(".pokemon-img").attr("src", res.sprites.front_default);
+        url: "https://localhost:7294/api/employees/" + guid,
+        type: "GET",
+        dataType: "json"
+    }).done((result) => {
+        // Mengisi nilai form dengan data yang diterima dari server
+        $("#guidUpd").val(result.data.guid);
+        $("#nikUpd").val(result.data.nik);
+        $("#firstNameUpd").val(result.data.firstName);
+        $("#lastNameUpd").val(result.data.lastName);
+        let birthDateFormat = moment(result.data.birthDate).format("yyyy-MM-DD");
+        $("#birthDateUpd").val(birthDateFormat);
+        // Melakukan penyesuaian untuk nilai gender
+        if (result.data.gender === 0) {
+            $("input[name='gender'][value='Female']").prop("checked", true);
+        } else {
+            $("input[name='gender'][value='Male']").prop("checked", true);
+        }
+        let hiringDateFormat = moment(result.data.hiringDate).format("yyyy-MM-DD");
+        $("#hiringDateUpd").val(hiringDateFormat);
+        $("#emailUpd").val(result.data.email);
+        $("#phoneNumberUpd").val(result.data.phoneNumber);
 
-        let types = "";
-        res.types.forEach((type) => {
-            let typeColor = getTypeColor(type.type.name)
-            types += `<span class = "badge rounded-pill" style = "background-color: ${typeColor}" ">${type.type.name}</span>`;
-        });
-        $(".pokemon-type").html(types);
-
-        let abilities = "";
-        res.abilities.forEach((ability) => {
-            abilities += `<li class = "list-group-item "> ${ability.ability.name}</li>`
-
-        });
-        $(".pokemon-abilities").html(abilities);
-
-        $("#hp").css("width", res.stats[0].base_stat + "%").html("HP : " + res.stats[0].base_stat);
-        $("#attack").css("width", res.stats[1].base_stat + "%").html("Attack : " + res.stats[1].base_stat);
-        $("#defense").css("width", res.stats[2].base_stat + "%").html("Defense : " + res.stats[2].base_stat);
-        $("#sattack").css("width", res.stats[3].base_stat + "%").html("Spesial Attack : " + res.stats[3].base_stat);
-        $("#sdefense").css("width", res.stats[4].base_stat + "%").html("Spesial Defense : " + res.stats[4].base_stat);
-        $("#speed").css("width", res.stats[5].base_stat + "%").html("Speed : " + res.stats[5].base_stat);
-        console.log(res);
-    })
-
-    
+        // Menampilkan modal update data employee
+        $("#modalemp2").modal("show");
+    }).fail((error) => {
+        alert("Failed to fetch employee data. Please try again.");
+    });
 }
+
+function UpdateEmployee()
+{
+    
+   
+    let data = {
+        guid: $("#guidUpd").val(),
+        nik: $("#nikUpd").val(),
+        firstName: $("#firstNameUpd").val(),
+        lastName: $("#lastNameUpd").val(),
+        birthDate: $("#birthDateUpd").val(),
+        gender: $("input[name='gender']:checked").val() === "Female" ? 0 : 1,
+        hiringDate: $("#hiringDateUpd").val(),
+        email: $("#emailUpd").val(),
+        phoneNumber: $("#phoneNumberUpd").val(),
+    };
+    $.ajax({
+        url: "https://localhost:7294/api/employees/",
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(data)
+    }).done((result) => {
+        Swal.fire(  //buat alert pemberitahuan jika success
+            'Data has been successfully updated!',
+            'success'
+        ).then(() => {
+            location.reload();
+        });
+    }).fail((error) => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Failed to insert data! Please try again.'
+        }) //alert pemberitahuan jika gagal
+    })
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Fruit Consumption'
+        },
+        xAxis: {
+            categories: ['Apples', 'Bananas', 'Oranges']
+        },
+        yAxis: {
+            title: {
+                text: 'Fruit eaten'
+            }
+        },
+        series: [{
+            name: 'Jane',
+            data: [1, 0, 4]
+        }, {
+            name: 'John',
+            data: [5, 7, 3]
+        }]
+    });
+});
+
