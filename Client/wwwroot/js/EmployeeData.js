@@ -107,32 +107,7 @@ $(document).ready(function () {
 });
 
 function addEmployee() {
-    //let firstName = $("#firstName").val();
-    //let lastName = $("#lastName").val();
-    //let birthDate = $("#birthDate").val();
-    //let gender = $("input[name=gender]:checked").val();
-    //let genderEnum;
-    //if (gender == "Female") {
-    //    genderEnum = 0;
-    //} else
-    //{
-    //    genderEnum = 1;
-    //}
-    //let hiringDate = $("#hiringDate").val();
-    //let email = $("#email").val();
-    //let phone = $("#phoneNumber").val();
-
-    //let data =
-    //{
-    //    firstName: firstName,
-    //    lastName: lastName,
-    //    birthDate: birthDate,
-    //    gender: genderEnum,
-    //    hiringDate: hiringDate,
-    //    email: email,
-    //    phone: phone
-    //};
-
+   
     let data = {
         firstName: $("#firstName").val(),
         lastName: $("#lastName").val(),
@@ -264,29 +239,62 @@ function UpdateEmployee()
     })
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'Fruit Consumption'
-        },
-        xAxis: {
-            categories: ['Apples', 'Bananas', 'Oranges']
-        },
-        yAxis: {
-            title: {
-                text: 'Fruit eaten'
+    // Mendapatkan data dari API
+    $.ajax({
+        url: "https://localhost:7256/api/employees", // Sesuaikan URL sesuai dengan endpoint API Anda
+        type: "GET",
+        dataType: "json"
+    }).done(res => {
+        //Mendapatkan jumlah jenis kelamin
+        let femaleCount = 0;
+        let maleCount = 0;
+        for (let i = 0; i < res.data.length; i++) {
+            if (res.data[i].gender === 0) {
+                femaleCount++;
+            } else if (res.data[i].gender === 1) {
+                maleCount++;
             }
-        },
-        series: [{
-            name: 'Jane',
-            data: [1, 0, 4]
-        }, {
-            name: 'John',
-            data: [5, 7, 3]
-        }]
+        }
+
+        //Menghitung total data
+        let totalCount = femaleCount + maleCount;
+
+        //Menghitung persentase jenis kelamin
+        let femalePercentage = (femaleCount / totalCount) * 100;
+        let malePercentage = (maleCount / totalCount) * 100;
+
+        var chart = Highcharts.charts('Pie-Chart', {
+
+            chart: {
+                type: 'pie'
+            },
+
+            title:
+            {
+                text: 'Employee Gender Distribitution 2023',
+                align: 'left'
+            },
+
+            series: [{
+                name: 'Gender',
+                data: [{
+                    name: 'Male',
+                    y: malePercentage
+                },
+                {
+                    name: 'Female',
+                    y: femalePercentage
+                
+                }]
+            }]
+        });
+       
     });
+
 });
+    
+
+
 

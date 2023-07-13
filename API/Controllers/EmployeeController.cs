@@ -2,7 +2,6 @@
 using API.DTOS.Employees;
 using API.Services;
 using API.Utilities;
-using API.Utilities.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -25,7 +24,7 @@ namespace API.Controllers
 
             if (entities == null)
             {
-                return NotFound(new ResponseHandler<GetEmployeesDto>
+                return NotFound(new ResponseHandler<GetEmployeeDto>
                 {
                     Code = StatusCodes.Status404NotFound,
                     Status = HttpStatusCode.NotFound.ToString(),
@@ -33,7 +32,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(new ResponseHandler<IEnumerable<GetEmployeesDto>>
+            return Ok(new ResponseHandler<IEnumerable<GetEmployeeDto>>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -48,7 +47,7 @@ namespace API.Controllers
             var employee = _service.GetEmployee(guid);
             if (employee is null)
             {
-                return NotFound(new ResponseHandler<GetEmployeesDto>
+                return NotFound(new ResponseHandler<GetEmployeeDto>
                 {
                     Code = StatusCodes.Status404NotFound,
                     Status = HttpStatusCode.NotFound.ToString(),
@@ -56,7 +55,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(new ResponseHandler<GetEmployeesDto>
+            return Ok(new ResponseHandler<GetEmployeeDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -71,7 +70,7 @@ namespace API.Controllers
             var createEmployee = _service.CreateEmployee(newEmployeeDto);
             if (createEmployee is null)
             {
-                return BadRequest(new ResponseHandler<GetEmployeesDto>
+                return BadRequest(new ResponseHandler<GetEmployeeDto>
                 {
                     Code = StatusCodes.Status400BadRequest,
                     Status = HttpStatusCode.BadRequest.ToString(),
@@ -79,7 +78,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(new ResponseHandler<GetEmployeesDto>
+            return Ok(new ResponseHandler<GetEmployeeDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -125,7 +124,7 @@ namespace API.Controllers
 
             if (delete is -1)
             {
-                return NotFound(new ResponseHandler<GetEmployeesDto>
+                return NotFound(new ResponseHandler<GetEmployeeDto>
                 {
                     Code = StatusCodes.Status404NotFound,
                     Status = HttpStatusCode.NotFound.ToString(),
@@ -134,7 +133,7 @@ namespace API.Controllers
             }
             if (delete is 0)
             {
-                return BadRequest(new ResponseHandler<GetEmployeesDto>
+                return BadRequest(new ResponseHandler<GetEmployeeDto>
                 {
                     Code = StatusCodes.Status500InternalServerError,
                     Status = HttpStatusCode.InternalServerError.ToString(),
@@ -142,7 +141,7 @@ namespace API.Controllers
                 });
             }
 
-            return Ok(new ResponseHandler<GetEmployeesDto>
+            return Ok(new ResponseHandler<GetEmployeeDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -196,23 +195,6 @@ namespace API.Controllers
                 Data = entities
             });
         }
-
-        [HttpGet("Count-Employee-Gender")]
-        [Route("api/employees/countGender")]
-        public IActionResult GetEmployeeCount()
-        {
-            int maleCount = _service.GetEmployee().Count(e => e.Gender == GenderEnum.Male);
-            int femaleCount = _service.GetEmployee().Count(e => e.Gender == GenderEnum.Female);
-
-            var result = new
-            {
-                MaleCount = maleCount,
-                FemaleCount = femaleCount
-            };
-
-            return Ok(result);
-        }
-
     }
 
 }

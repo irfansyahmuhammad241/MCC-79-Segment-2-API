@@ -1,11 +1,11 @@
-﻿using API.Utilities.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using API.Utilities.Enums;
 
 namespace API.DTOS.Employees
 {
     public class NewEmployeeDto
     {
-     
+
         [Required]
         public string FirstName { get; set; }
         public string LastName { get; set; }

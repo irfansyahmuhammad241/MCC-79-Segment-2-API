@@ -2,7 +2,7 @@
 
 namespace API.DTOS.Employees
 {
-    public class GetEmployeesDto
+    public class GetEmployeeDto
     {
         public Guid Guid { get; set; }
         public string NIK { get; set; }

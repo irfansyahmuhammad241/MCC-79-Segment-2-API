@@ -1,6 +1,6 @@
-﻿using Client.Models;
+﻿using System.Diagnostics;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Client.Controllers
 {
@@ -29,4 +29,5 @@ namespace Client.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
 }

@@ -24,7 +24,7 @@ namespace API.Services
             _employeeRepository = employeeRepository;
         }
 
-        public IEnumerable<GetEmployeesDto>? GetEmployee()
+        public IEnumerable<GetEmployeeDto>? GetEmployee()
         {
             var employees = _employeeRepository.GetAll();
             if (!employees.Any())
@@ -33,7 +33,7 @@ namespace API.Services
             }
 
             var toDto = employees.Select(employee =>
-                                                new GetEmployeesDto
+                                                new GetEmployeeDto
                                                 {
                                                     Guid = employee.Guid,
                                                     NIK = employee.NIK,
@@ -49,7 +49,7 @@ namespace API.Services
             return toDto; // employee found
         }
 
-        public GetEmployeesDto? GetEmployee(Guid guid)
+        public GetEmployeeDto? GetEmployee(Guid guid)
         {
             var employee = _employeeRepository.GetByGuid(guid);
             if (employee is null)
@@ -57,7 +57,7 @@ namespace API.Services
                 return null; // employee not found
             }
 
-            var toDto = new GetEmployeesDto
+            var toDto = new GetEmployeeDto
             {
                 Guid = employee.Guid,
                 NIK = employee.NIK,
@@ -73,7 +73,7 @@ namespace API.Services
             return toDto; // employees found
         }
 
-        public GetEmployeesDto? CreateEmployee(NewEmployeeDto newEmployeeDto)
+        public GetEmployeeDto? CreateEmployee(NewEmployeeDto newEmployeeDto)
         {
             var employee = new Employee
             {
@@ -96,7 +96,7 @@ namespace API.Services
                 return null; // employee not created
             }
 
-            var toDto = new GetEmployeesDto
+            var toDto = new GetEmployeeDto
             {
                 Guid = employee.Guid,
                 NIK = employee.NIK,
