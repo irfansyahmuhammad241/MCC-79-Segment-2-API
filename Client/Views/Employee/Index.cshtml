@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Employee List</h1>
 
 <p>
-    <a href="Employee/Create">Create New</a>
+    <a href="Employee/Create" class ="btn btn-primary">Add Employee</a>
 </p>
 <table class="table">
     <thead>
@@ -75,7 +75,7 @@
             <td>
                  <form action="/Employee/Edit" method="get">
                         <input type="hidden" value="@item.Guid" name="guid" />
-                        <input type="submit" value="Edit" class="btn btn-primary" onclick="return true" />
+                        <input type="submit" value="Edit" class="btn btn-primary d-inline" onclick="return true" />
                  </form>
                  <form action="/Employee/Delete" method="post" onsubmit="return confirm('Apakah Anda Yakin Ingin menghapus data ini?')">
                     <input type="hidden" value="@item.Guid" name="guid"/>
