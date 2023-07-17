@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using API.Utilities;
 using Client.Contracts;
 using Newtonsoft.Json;
@@ -20,6 +21,7 @@ namespace Client.Repositories
                 BaseAddress = new Uri("https://localhost:7294/api/")
             };
             this.request = request;
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", contextAccessor.HttpContext?.Session.GetString("JWToken"));
         }
 
         public async Task<ResponseHandler<Entity>> Delete(TId id)
